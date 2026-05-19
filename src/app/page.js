@@ -1,65 +1,90 @@
+import Link from "next/link";
 import Image from "next/image";
+import ClientFacilities from "@/components/ClientFacilities"; // আমরা একটা ছোট ক্লায়েন্ট পার্ট আলাদা রাখব
 
-export default function Home() {
+// ১. তোর সেই কাঙ্ক্ষিত এবং সফল সার্ভার সাইড ফেচ ফাংশন
+async function getFacilities() {
+  try {
+    const res = await fetch("http://localhost:5000/api/facility", {
+      cache: "no-store", // প্রতিবার ডাটাবেজ থেকে লাইভ ডাটা আনবে
+    });
+    if (!res.ok) return [];
+    
+    const data = await res.json();
+    return data?.facilities || [];
+  } catch (error) {
+    console.error("Server fetch error:", error);
+    return [];
+  }
+}
+
+// ২. মেইন হোম পেজ (সার্ভার কম্পোনেন্ট)
+export default async function Home() {
+  const allFacilities = await getFacilities();
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div className="w-full bg-[#121212] antialiased text-white min-h-screen">
+      
+      {/* 🏙️ HERO SECTION (যেটা গায়েব হয়েছিল, আবার ফেরত আনা হলো) */}
+      <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden bg-black">
+        <Image 
+          src="https://images.pexels.com/photos/23848540/pexels-photo-23848540.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" 
+          alt="Sports Court Background" 
+          fill={true}
+          priority={true}
+          className="absolute inset-0 object-cover object-center w-full h-full opacity-85" 
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.js file.
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-[#121212] z-10"></div>
+        <div className="max-w-4xl mx-auto px-4 text-center z-20 pt-24">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-[#10b981] text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-full mb-6">
+            <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></span>
+            Where Champions Train
+          </div>
+          <h1 className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tighter text-white uppercase leading-[0.95] select-none">
+            Where Your <br />
+            <span className="text-[#10b981]">Game Start</span>
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="mt-6 text-sm text-zinc-200 max-w-xl mx-auto leading-relaxed">
+            Unlock the next level of performance. Discover and book premium, high-end turfs and courts tailored for ultimate athletes.
           </p>
+          <div className="mt-8 flex gap-4 justify-center">
+            <a href="#search-section" className="inline-flex items-center bg-[#10b981] hover:bg-[#0d9488] text-white font-bold text-xs uppercase tracking-widest h-12 px-6 rounded-xl transition-all">
+              Explore Arenas ⚡
+            </a>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      {/* 🔍 SEARCH, FILTER & CARDS SECTION */}
+      {/* আমরা সার্ভার থেকে আনা ডাটা এই ক্লায়েন্ট পার্টটাতে পাস করে দিচ্ছি */}
+      <ClientFacilities initialFacilities={allFacilities} />
+
+      {/* 🏆 STATIC INFO SECTION */}
+      <section id="why-choose-us" className="w-full bg-zinc-900/20 border-y border-zinc-900/60 py-16 px-4">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-xl font-black uppercase tracking-tight mb-10">
+            Why <span className="text-[#10b981]">Choose Us</span>
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="p-6 bg-zinc-900 border border-zinc-800/60 rounded-2xl">
+              <span className="text-xl block mb-3">⚡</span>
+              <h4 className="text-xs font-black uppercase text-white mb-1">Instant Slot Booking</h4>
+              <p className="text-[11px] text-zinc-500">Real-time confirmation on all match bookings with zero waiting lines.</p>
+            </div>
+            <div className="p-6 bg-zinc-900 border border-zinc-800/60 rounded-2xl">
+              <span className="text-xl block mb-3">🏟️</span>
+              <h4 className="text-xs font-black uppercase text-white mb-1">Top Tier Arenas</h4>
+              <p className="text-[11px] text-zinc-500">Verified high-end football turfs and standard badminton courts.</p>
+            </div>
+            <div className="p-6 bg-zinc-900 border border-zinc-800/60 rounded-2xl">
+              <span className="text-xl block mb-3">🛡️</span>
+              <h4 className="text-xs font-black uppercase text-white mb-1">Flexible Scheduling</h4>
+              <p className="text-[11px] text-zinc-500">Easy cancellation and slot shifting dashboards built for your squad.</p>
+            </div>
+          </div>
         </div>
-      </main>
+      </section>
+
     </div>
   );
 }
