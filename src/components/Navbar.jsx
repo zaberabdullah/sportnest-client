@@ -17,7 +17,7 @@ export default function Navbar() {
   return (
     <div className="absolute top-0 left-0 w-full z-50 pt-4 px-4 sm:px-6 lg:px-8">
       <nav className="w-full max-w-7xl mx-auto h-20 bg-transparent flex items-center justify-between">
-        
+         
     
         <Link href="/" className="flex items-center gap-3">
           <div className="w-10 h-10 bg-[#10b981] rounded-xl flex items-center justify-center text-white font-black text-xl">

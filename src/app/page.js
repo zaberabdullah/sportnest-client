@@ -1,12 +1,12 @@
 import Link from "next/link";
 import Image from "next/image";
-import ClientFacilities from "@/components/ClientFacilities"; // আমরা একটা ছোট ক্লায়েন্ট পার্ট আলাদা রাখব
+import ClientFacilities from "@/components/ClientFacilities";
 
-// ১. তোর সেই কাঙ্ক্ষিত এবং সফল সার্ভার সাইড ফেচ ফাংশন
+
 async function getFacilities() {
   try {
     const res = await fetch("http://localhost:5000/api/facility", {
-      cache: "no-store", // প্রতিবার ডাটাবেজ থেকে লাইভ ডাটা আনবে
+      cache: "no-store", 
     });
     if (!res.ok) return [];
     
@@ -18,14 +18,13 @@ async function getFacilities() {
   }
 }
 
-// ২. মেইন হোম পেজ (সার্ভার কম্পোনেন্ট)
 export default async function Home() {
   const allFacilities = await getFacilities();
 
   return (
     <div className="w-full bg-[#121212] antialiased text-white min-h-screen">
       
-      {/* 🏙️ HERO SECTION (যেটা গায়েব হয়েছিল, আবার ফেরত আনা হলো) */}
+     
       <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden bg-black">
         <Image 
           src="https://images.pexels.com/photos/23848540/pexels-photo-23848540.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" 
@@ -55,11 +54,10 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 🔍 SEARCH, FILTER & CARDS SECTION */}
-      {/* আমরা সার্ভার থেকে আনা ডাটা এই ক্লায়েন্ট পার্টটাতে পাস করে দিচ্ছি */}
+     
       <ClientFacilities initialFacilities={allFacilities} />
 
-      {/* 🏆 STATIC INFO SECTION */}
+    
       <section id="why-choose-us" className="w-full bg-zinc-900/20 border-y border-zinc-900/60 py-16 px-4">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-xl font-black uppercase tracking-tight mb-10">

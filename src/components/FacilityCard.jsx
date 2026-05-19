@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useSession } from "@/lib/auth-client";
+import Image from "next/image";
 
 const TYPE_STYLES = {
   Football:   { bg: "bg-green-100",  text: "text-green-700"  },
@@ -46,7 +47,7 @@ export default function FacilityCard({ facility }) {
       {/* Image */}
       <div className="relative h-44 bg-slate-50 overflow-hidden">
         {image ? (
-          <img
+          <Image
             src={image}
             alt={name}
             className="w-full h-full object-cover"
