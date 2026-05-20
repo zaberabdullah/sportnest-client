@@ -44,7 +44,7 @@ export default function FacilityCard({ facility }) {
   return (
     <div className="bg-white border border-slate-100 rounded-2xl overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col">
 
-      {/* Image */}
+   
       <div className="relative h-44 bg-slate-50 overflow-hidden">
         {image ? (
           <Image
@@ -60,7 +60,7 @@ export default function FacilityCard({ facility }) {
           </div>
         )}
 
-        {/* Type badge */}
+      
         <div className="absolute top-3 left-3">
           <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${typeStyle.bg} ${typeStyle.text}`}>
             {facility_type}
@@ -68,15 +68,14 @@ export default function FacilityCard({ facility }) {
         </div>
       </div>
 
-      {/* Body */}
+  
       <div className="flex flex-col flex-1 p-4">
 
-        {/* Name */}
-        <h3 className="font-semibold text-slate-900 text-[15px] mb-1 truncate">
+           <h3 className="font-semibold text-slate-900 text-[15px] mb-1 truncate">
           {name}
         </h3>
 
-        {/* Location */}
+
         <p className="text-xs text-slate-400 flex items-center gap-1 mb-3">
           <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -85,10 +84,10 @@ export default function FacilityCard({ facility }) {
           {location}
         </p>
 
-        {/* Divider */}
+
         <div className="h-px bg-slate-100 mb-3" />
 
-        {/* Info row */}
+
         <div className="flex items-center gap-4 text-xs text-slate-400 mb-4">
           <span className="flex items-center gap-1">
             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -107,7 +106,32 @@ export default function FacilityCard({ facility }) {
           )}
         </div>
 
-        {/* Price + Button */}
+
+
+<div className="flex gap-2 mt-4 pt-4 border-t border-slate-100">
+  <button
+    onClick={() => {
+  
+      console.log("Update Clicked for:", _id);
+    }}
+    className="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-600 text-xs font-semibold py-2 rounded-lg transition-all"
+  >
+    Update
+  </button>
+  
+  <button
+    onClick={() => {
+      if(confirm("Are you sure you want to delete this facility?")) {
+        
+         console.log("Deleting:", _id);
+      }
+    }}
+    className="flex-1 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-semibold py-2 rounded-lg transition-all"
+  >
+    Delete
+  </button>
+</div>
+
         <div className="flex items-center justify-between mt-auto">
           <div>
             <span className="text-lg font-bold text-green-600">

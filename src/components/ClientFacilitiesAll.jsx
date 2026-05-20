@@ -2,6 +2,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { Search } from "lucide-react";
 
 export default function ClientFacilitiesAll({ initialFacilities }) {
   const [searchQuery, setSearchQuery] = useState("");
@@ -17,7 +18,6 @@ export default function ClientFacilitiesAll({ initialFacilities }) {
 
   return (
     <>
-      {/* SEARCH & FILTER CONTROLS */}
       <section className="mb-10 p-6 bg-zinc-900/40 border border-zinc-800/60 rounded-3xl">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
           <div className="w-full lg:w-96 relative">
@@ -28,7 +28,9 @@ export default function ClientFacilitiesAll({ initialFacilities }) {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full h-12 pl-12 pr-4 bg-zinc-950 border border-zinc-850 rounded-xl text-xs font-semibold text-white uppercase tracking-wider focus:outline-none focus:border-[#10b981] transition-all"
             />
-            <span className="absolute left-4 top-3.5 text-zinc-500 text-sm">🔍</span>
+            <span className="absolute left-4 top-3.5 text-zinc-500 text-sm">
+              <Search size={20} />
+            </span>
           </div>
 
           <div className="flex flex-wrap gap-2 w-full lg:w-auto justify-start">
@@ -70,7 +72,7 @@ export default function ClientFacilitiesAll({ initialFacilities }) {
             <div className="p-5 flex-grow flex flex-col justify-between">
               <div>
                 <h3 className="text-sm font-black uppercase tracking-wide text-white">{facility.name}</h3>
-                <p className="text-[11px] text-zinc-500 font-medium mt-1">📍 {facility.location}</p>
+                <p className="text-[11px] text-zinc-500 font-medium mt-1"> {facility.location}</p>
               </div>
 
               <div className="pt-4 mt-4 border-t border-zinc-800/60 flex items-center justify-between">

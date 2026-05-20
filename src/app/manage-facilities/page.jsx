@@ -1,92 +1,122 @@
+"use client";
+import { useState, useEffect } from "react";
 import Image from "next/image";
+import toast from "react-hot-toast";
 
+export default function ManageFacilitiesPage() {
+  const [facilities, setFacilities] = useState([]);
+  const [selectedFacility, setSelectedFacility] = useState(null);
+  const [formData, setFormData] = useState({});
 
-async function getFacilities() {
-  try {
-    const res = await fetch("http://localhost:5000/api/facility", { 
-      cache: "no-store" 
+  useEffect(() => {
+    fetch("http://localhost:5000/api/facility")
+      .then((res) => res.json())
+      .then((data) => setFacilities(data.facilities || []));
+  }, []);
+
+  const handleDelete = async (id) => {
+    if (!confirm("Are you sure you want to delete this facility?")) return;
+    const res = await fetch(`http://localhost:5000/api/facility/${id}`, { method: "DELETE" });
+    if (res.ok) {
+      setFacilities(facilities.filter((f) => f._id !== id));
+      toast.success("Deleted successfully!");
+    }
+  };
+
+  const openUpdateModal = (facility) => {
+    setSelectedFacility(facility);
+    setFormData(facility);
+  };
+
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    const res = await fetch(`http://localhost:5000/api/facility/${selectedFacility._id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
     });
-    
-    if (!res.ok) return [];
-    const data = await res.json();
-    
-
-    if (Array.isArray(data)) return data;
-    if (data && Array.isArray(data.data)) return data.data;
-    return [];
-  } catch (error) {
-    console.error("Server Fetch Error:", error);
-    return [];
-  }
-}
-
-export default async function ManageFacilitiesPage() {
-  const facilities = await getFacilities();
+    if (res.ok) {
+      toast.success("Updated successfully!");
+      setFacilities(facilities.map((f) => (f._id === selectedFacility._id ? formData : f)));
+      setSelectedFacility(null);
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-[#060814] bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-emerald-950/20 via-slate-950 to-black text-white p-6 sm:p-8 pt-24 relative overflow-hidden">
-      
-   
-      <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-emerald-500/5 rounded-full blur-[130px] pointer-events-none"></div>
-
-      <div className="max-w-6xl mx-auto relative z-10">
-        
-        <div className="mb-8 pt-50">
-          <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-white">
-            Manage <span className="bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">Facilities</span>
-          </h2>
-          <p className="text-zinc-400 text-xs mt-1">Pure Next.js Server-Side Rendered View</p>
-        </div>
-
-       
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="min-h-screen bg-[#060814] text-white p-6 pt-24">
+      <div className="max-w-6xl mx-auto">
+        <h2 className="text-3xl font-black uppercase mb-8">Manage Facilities</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {facilities.map((f) => (
-            <div key={f._id} className="bg-zinc-900/30 border border-zinc-800/80 backdrop-blur-xl p-4 rounded-3xl flex flex-col gap-4 shadow-xl hover:border-zinc-700/80 transition-all group">
-              
-             
-              <div className="relative w-full aspect-[16/10] bg-zinc-950 rounded-2xl overflow-hidden border border-zinc-800/60">
+            <div key={f._id} className="bg-zinc-900/50 p-4 rounded-3xl border border-zinc-800">
+              <div className="relative w-full aspect-[16/10] rounded-xl overflow-hidden mb-4">
                 <Image
                   src={f.image || "https://images.unsplash.com/photo-1541252260730-0412e8e2108e"}
-                  alt={f.name || "Facility"}
+                  alt={f.name}
                   fill
-                  sizes="(max-w-7xl) 33vw"
-                  className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  className="object-cover"
                 />
               </div>
-
-          
-              <div className="flex-1 flex flex-col justify-between gap-2">
-                <div>
-                  <h3 className="font-bold text-lg text-zinc-100 group-hover:text-emerald-400 transition-colors truncate">
-                    {f.name}
-                  </h3>
-                  <p className="text-xs text-zinc-400 flex items-center gap-1 mt-0.5">
-                    📍 {f.location}
-                  </p>
-                </div>
-                <div className="mt-2 flex items-center justify-between">
-                  <span className="text-[11px] uppercase tracking-wider text-zinc-500 font-bold">Rate</span>
-                  <p className="text-emerald-400 font-black text-lg">${f.pricePerHour}<span className="text-xs text-zinc-500 font-normal">/hr</span></p>
-                </div>
+              <h3 className="font-bold text-lg">{f.name}</h3>
+              <p className="text-emerald-400 font-black mb-4">${f.pricePerHour}/hr</p>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => openUpdateModal(f)}
+                  className="flex-1 bg-zinc-700 py-2 rounded-xl text-xs font-bold uppercase"
+                >
+                  Update
+                </button>
+                <button
+                  onClick={() => handleDelete(f._id)}
+                  className="flex-1 bg-red-600 py-2 rounded-xl text-xs font-bold uppercase"
+                >
+                  Delete
+                </button>
               </div>
-
-
-              <button
-                className="w-full py-2.5 bg-red-500/10 hover:bg-red-600 text-red-400 hover:text-white border border-red-500/20 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-200"
-              >
-                Delete Facility
-              </button>
             </div>
           ))}
         </div>
-        {facilities.length === 0 && (
-          <div className="text-center py-20 bg-zinc-900/10 border border-zinc-800/40 rounded-3xl backdrop-blur-sm">
-
-            <p className="font-semibold text-sm text-zinc-400">No facilities found in the system!</p>
-            <p className="text-xs text-zinc-500 mt-1">Go to All Facility page to add a field first.</p>
-          </div>
-        )}
       </div>
+
+      {selectedFacility && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
+          <form onSubmit={handleUpdate} className="bg-zinc-900 p-8 rounded-3xl w-full max-w-lg border border-zinc-700">
+            <h2 className="text-xl font-bold mb-4">Update Facility</h2>
+            <input
+              type="text"
+              defaultValue={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              className="w-full bg-zinc-800 p-3 rounded-xl mb-3 text-white"
+              placeholder="Facility Name"
+            />
+            <input
+              type="number"
+              defaultValue={formData.pricePerHour}
+              onChange={(e) => setFormData({ ...formData, pricePerHour: e.target.value })}
+              className="w-full bg-zinc-800 p-3 rounded-xl mb-3 text-white"
+              placeholder="Price Per Hour"
+            />
+            <textarea
+              defaultValue={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              className="w-full bg-zinc-800 p-3 rounded-xl mb-3 text-white"
+              placeholder="Description"
+            ></textarea>
+            <div className="flex gap-4 mt-4">
+              <button type="submit" className="flex-1 bg-emerald-600 py-3 rounded-xl font-bold">
+                Save Changes
+              </button>
+              <button
+                type="button"
+                onClick={() => setSelectedFacility(null)}
+                className="flex-1 bg-zinc-700 py-3 rounded-xl"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
     </div>
   );
 }

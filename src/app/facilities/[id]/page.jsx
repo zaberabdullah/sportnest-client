@@ -1,37 +1,26 @@
-import Link from "next/link";
+"use client";
+import { useState, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import BookingModal from "@/components/BookingModal";
 
-async function getSingleFacility(id) {
-  try {
-    const res = await fetch(`http://localhost:5000/api/facility/${id}`, {
-      cache: "no-store",
-    });
-    if (!res.ok) return null;
-    const data = await res.json();
+export default function FacilityDetails({ params }) {
+  const [facility, setFacility] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [id, setId] = useState(null);
 
-    return data?.facility || data;
-  } catch (error) {
-    console.error("Error fetching single facility:", error);
-    return null;
-  }
-}
+  useEffect(() => {
+    params.then((p) => setId(p.id));
+  }, [params]);
 
-export default async function FacilityDetails({ params }) {
-  const resolvedParams = await params;
-  const { id } = resolvedParams;
+  useEffect(() => {
+    if (!id) return;
+    fetch(`http://localhost:5000/api/facility/${id}`)
+      .then((res) => res.json())
+      .then((data) => setFacility(data.facility || data));
+  }, [id]);
 
-  const facility = await getSingleFacility(id);
-
-  if (!facility) {
-    return (
-      <div className="w-full min-h-screen bg-[#121212] flex flex-col items-center justify-center text-white p-4">
-        <h2 className="text-xl font-black uppercase text-red-500 mb-4">❌ Facility Not Found</h2>
-        <Link href="/" className="bg-[#10b981] text-xs font-bold uppercase px-5 py-3 rounded-xl">
-          Back To Home
-        </Link>
-      </div>
-    );
-  }
+  if (!facility) return <div className="text-white p-20">Loading...</div>;
 
   return (
     <div className="w-full bg-[#121212] min-h-screen text-white antialiased flex flex-col">
@@ -111,10 +100,16 @@ export default async function FacilityDetails({ params }) {
               </div>
             </div>
 
-            <button className="w-full h-12 bg-[#10b981] hover:bg-[#0d9488] text-white text-xs font-black uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-[#10b981]/10">
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="w-full h-12 bg-[#10b981] hover:bg-[#0d9488] text-white text-xs font-black uppercase rounded-xl transition-all"
+            >
               Proceed To Booking ⚡
             </button>
 
+            {isModalOpen && (
+              <BookingModal facilityId={id} price={facility.price_per_hour} onClose={() => setIsModalOpen(false)} />
+            )}
             <div className="border-t border-zinc-800/60 pt-5">
               <h4 className="text-xs font-black uppercase tracking-wider text-zinc-400 mb-3">
                 Available Slots ({facility.available_slots?.length || 0})
