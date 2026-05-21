@@ -65,7 +65,8 @@ export default function ClientFacilities({ initialFacilities }) {
                 <Image
                   src={facility.image || "https://images.unsplash.com/photo-1541252260730-0412e8e2108e"}
                   alt={facility.name}
-                  fill
+                  fill 
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"           
                   className="object-cover"
                 />
                 <span className="absolute top-3 left-3 bg-black/80 text-[#10b981] border border-zinc-800 text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md">

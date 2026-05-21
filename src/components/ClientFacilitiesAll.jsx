@@ -21,7 +21,7 @@ export default function ClientFacilitiesAll({ initialFacilities }) {
       <section className="mb-10 p-6 bg-zinc-900/40 border border-zinc-800/60 rounded-3xl">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
           <div className="w-full lg:w-96 relative">
-            <input
+                         <input
               type="text"
               placeholder="Search arenas by name..."
               value={searchQuery}
@@ -62,6 +62,7 @@ export default function ClientFacilitiesAll({ initialFacilities }) {
                 src={facility.image || "https://images.unsplash.com/photo-1541252260730-0412e8e2108e"}
                 alt={facility.name}
                 fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" 
                 className="object-cover"
               />
               <span className="absolute top-3 left-3 bg-black/80 text-[#10b981] border border-zinc-800/60 text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md">

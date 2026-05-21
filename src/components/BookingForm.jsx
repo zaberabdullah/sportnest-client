@@ -1,8 +1,10 @@
 "use client";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { useSession } from "@/lib/auth-client"; 
 
-export default function BookingForm({ facilityId, price, userEmail }) {
+export default function BookingForm({ facilityId, price }) {
+  const { data: session } = useSession(); 
   const [formData, setFormData] = useState({
     booking_date: "",
     time_slot: "",
@@ -12,9 +14,14 @@ export default function BookingForm({ facilityId, price, userEmail }) {
   const handleBooking = async (e) => {
     e.preventDefault();
     
+    if (!session?.user?.email) {
+      toast.error("Please login first!");
+      return;
+    }
+    
     const payload = {
       facility_id: facilityId,
-      user_email: userEmail,
+      user_email: session.user.email, 
       booking_date: formData.booking_date,
       time_slot: formData.time_slot,
       hours: formData.hours,
@@ -25,6 +32,7 @@ export default function BookingForm({ facilityId, price, userEmail }) {
       const res = await fetch("http://localhost:5000/api/booking", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include", 
         body: JSON.stringify(payload),
       });
 

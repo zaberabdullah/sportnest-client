@@ -1,50 +1,49 @@
 "use server";
-
-import { revalidatePath } from "next/cache";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
 export async function createFacility(formData) {
+  let session;
   try {
-    const name = formData.get("name");
-    const facility_type = formData.get("facility_type");
-    const location = formData.get("location");
-    const price_per_hour = Number(formData.get("price_per_hour"));
-    const capacity = Number(formData.get("capacity"));
-    const description = formData.get("description");
-    const image = formData.get("image");
+    session = await auth.api.getSession({
+      headers: await headers(),
+    });
+  } catch (err) {
+    return { success: false, message: "Authentication failed" };
+  }
 
-    const available_slots = ["06:00 PM - 07:00 PM", "07:00 PM - 08:00 PM", "08:00 PM - 09:00 PM"];
+  if (!session?.user?.email) {
+    return { success: false, message: "Please login first" };
+  }
 
-    const finalData = {
-      name,
-      facility_type,
-      location,
-      price_per_hour,
-      capacity,
-      available_slots,
-      description,
-      image,
-    };
+  const payload = {
+    name: formData.get("name"),
+    facility_type: formData.get("facility_type"),
+    location: formData.get("location"),
+    price_per_hour: Number(formData.get("price_per_hour")),
+    capacity: Number(formData.get("capacity")),
+    available_slots: ["06:00 PM - 07:00 PM", "07:00 PM - 08:00 PM", "08:00 PM - 09:00 PM"],
+    description: formData.get("description"),
+    image: formData.get("image"),
+    owner_email: session.user.email,
+  };
 
-    console.log("Sending to Backend API:", finalData);
-
+  try {
     const res = await fetch("http://localhost:5000/api/facility", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(finalData),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
     });
 
     const data = await res.json();
 
-    if (res.ok) {
-      revalidatePath("/dashboard/manage-facilities");
-      return { success: true, message: "Facility added successfully!" };
+    if (res.ok && data.success) {
+      redirect("/manage-facilities");
     }
 
-    return { success: false, message: data.message || "Failed to save on database." };
+    return { success: false, message: data.message || "Failed to save facility" };
   } catch (err) {
-    console.error("Server Action Error:", err);
-    return { success: false, message: "Server action failed entirely!" };
+    return { success: false, message: "Server error occurred" };
   }
 }

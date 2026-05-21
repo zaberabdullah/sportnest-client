@@ -1,19 +1,27 @@
 "use client";
 import toast from "react-hot-toast";
+import { useSession } from "@/lib/auth-client"; 
 
 export default function BookingModal({ facilityId, price, onClose }) {
+  const { data: session } = useSession(); 
   
   const handleBooking = async (e) => {
     e.preventDefault();
+    
+    if (!session?.user?.email) {
+      toast.error("Please login first!");
+      return;
+    }
+    
     const form = e.target;
     
-
     const res = await fetch("http://localhost:5000/api/booking", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      credentials: "include", 
       body: JSON.stringify({
         facility_id: facilityId,
-        user_email: "test@example.com", 
+        user_email: session.user.email, 
         booking_date: form.date.value,
         time_slot: form.slot.value,
         hours: 1,
@@ -29,6 +37,7 @@ export default function BookingModal({ facilityId, price, onClose }) {
       toast.error(data.message || "Booking failed!");
     }
   };
+
 
   return (
     <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">

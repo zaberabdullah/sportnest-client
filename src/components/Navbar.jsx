@@ -1,24 +1,19 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useSession, signOut } from "@/lib/auth-client"; 
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [user, setUser] = useState(null);
+  const { data: session, isPending } = useSession(); 
   const pathname = usePathname();
   const router = useRouter();
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-  }, [pathname]);
+  const user = session?.user; 
 
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    setUser(null);
+  const handleLogout = async () => {
+    await signOut(); 
     setIsOpen(false);
     router.push("/");
     router.refresh();
@@ -64,11 +59,17 @@ export default function Navbar() {
         </div>
 
         <div className="hidden md:flex items-center gap-4">
-          {user ? (
+          {isPending ? (
+            <div className="w-10 h-10 rounded-full bg-zinc-800 animate-pulse"></div>
+          ) : user ? (
             <div className="dropdown dropdown-end">
               <label tabIndex={0} className="btn btn-ghost btn-circle avatar border border-zinc-700">
                 <div className="w-10 rounded-full bg-zinc-800 flex items-center justify-center text-white font-bold">
-                  {user.photoURL ? <img src={user.photoURL} alt={user.name} /> : user.name?.charAt(0).toUpperCase()}
+                  {user.image ? (
+                    <img src={user.image} alt={user.name} className="rounded-full" />
+                  ) : (
+                    user.name?.charAt(0).toUpperCase()
+                  )}
                 </div>
               </label>
               <ul
@@ -87,7 +88,7 @@ export default function Navbar() {
                   </li>
                 ))}
                 <li className="mt-2 pt-2 border-t border-zinc-800">
-                  <button onClick={handleLogout} className="text-rose-500 font-bold hover:bg-rose-500/10">
+                  <button onClick={handleLogout} className="text-rose-500 font-bold hover:bg-rose-500/10 w-full text-left p-2 rounded-lg">
                     Logout
                   </button>
                 </li>
@@ -142,7 +143,7 @@ export default function Navbar() {
                     : "text-zinc-300 hover:bg-zinc-800/50"
                 }`}
               >
-                <span className="mr-3 text-base">{link.label === "Home" ? "🏠" : "🏟️"}</span>
+                <span className="mr-3 text-base">{link.label === "Home" ? "🏠" : "🏟"}</span>
                 {link.label}
               </Link>
             ))}
@@ -159,7 +160,7 @@ export default function Navbar() {
                       isActive(link.href) ? "text-[#10b981] bg-[#10b981]/10" : "text-zinc-300 hover:bg-zinc-800/50"
                     }`}
                   >
-                    <span className="mr-3 text-base">⚙️</span>
+                    <span className="mr-3 text-base">⚙</span>
                     {link.label}
                   </Link>
                 ))}
