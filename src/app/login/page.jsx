@@ -2,7 +2,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import toast from "react-hot-toast";
+import { toast } from "sonner"; // ✅ sonner ইউজ করো
 import { FcGoogle } from "react-icons/fc";
 import { signIn } from "@/lib/auth-client";
 
@@ -54,7 +54,7 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text- font-bold uppercase tracking-wider text-zinc-400 mb-1">
+            <label className="block text-xs font-bold uppercase tracking-wider text-zinc-400 mb-1">
               Email Address
             </label>
             <input
@@ -67,7 +67,7 @@ export default function LoginPage() {
             />
           </div>
           <div>
-            <label className="block text- font-bold uppercase tracking-wider text-zinc-400 mb-1">
+            <label className="block text-xs font-bold uppercase tracking-wider text-zinc-400 mb-1">
               Password
             </label>
             <input
