@@ -1,5 +1,5 @@
 "use client";
-import { useState, Suspense } from "react"; // Suspense import koro
+import { useState, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
@@ -9,10 +9,13 @@ import { signIn } from "@/lib/auth-client";
 function LoginComponent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || "/";
+  
+ 
+  const callbackUrl = searchParams.get("callbackUrl") || "https://sportnest-client-sigma.vercel.app";
 
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false); // Google er jonno loading
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -39,10 +42,16 @@ function LoginComponent() {
   };
 
   const handleGoogleLogin = async () => {
-    await signIn.social({
-      provider: "google",
-      callbackURL: callbackUrl,
-    });
+    setGoogleLoading(true); 
+    try {
+      await signIn.social({
+        provider: "google",
+        callbackURL: callbackUrl, 
+      });
+    } catch (error) {
+      toast.error("Google login failed!");
+      setGoogleLoading(false);
+    }
   };
 
   return (
@@ -92,9 +101,10 @@ function LoginComponent() {
         </div>
         <button
           onClick={handleGoogleLogin}
-          className="w-full h-11 bg-transparent hover:bg-zinc-800 text-white border border-zinc-800 font-semibold text-xs uppercase tracking-wider rounded-xl transition-all mt-4 flex items-center justify-center gap-2"
+          disabled={googleLoading} 
+          className="w-full h-11 bg-transparent hover:bg-zinc-800 disabled:opacity-50 text-white border border-zinc-800 font-semibold text-xs uppercase tracking-wider rounded-xl transition-all mt-4 flex items-center justify-center gap-2"
         >
-          <FcGoogle size={20} /> Continue with Google
+          <FcGoogle size={20} /> {googleLoading ? "Redirecting..." : "Continue with Google"}
         </button>
       </div>
 
