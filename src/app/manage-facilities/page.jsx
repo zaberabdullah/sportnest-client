@@ -2,10 +2,10 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import toast from "react-hot-toast";
-import { useSession } from "@/lib/auth-client"; 
+import { useSession } from "@/lib/auth-client";
 
 export default function ManageFacilitiesPage() {
-  const { data: session, isPending } = useSession(); 
+  const { data: session, isPending } = useSession();
   const [facilities, setFacilities] = useState([]);
   const [selectedFacility, setSelectedFacility] = useState(null);
   const [formData, setFormData] = useState({});
@@ -14,8 +14,8 @@ export default function ManageFacilitiesPage() {
   useEffect(() => {
     if (!isPending && session?.user?.email) {
       setLoading(true);
-      fetch(`http://localhost:5000/api/facility?user_email=${session.user.email}`, {
-        credentials: "include", 
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/facility?user_email=${session.user.email}`, {
+        credentials: "include",
       })
         .then((res) => res.json())
         .then((data) => setFacilities(data.facilities || []))
@@ -25,9 +25,9 @@ export default function ManageFacilitiesPage() {
 
   const handleDelete = async (id) => {
     if (!confirm("Are you sure you want to delete this facility?")) return;
-    const res = await fetch(`http://localhost:5000/api/facility/${id}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/facility/${id}`, {
       method: "DELETE",
-      credentials: "include", 
+      credentials: "include",
     });
     const data = await res.json();
     if (res.ok && data.success) {
@@ -45,10 +45,10 @@ export default function ManageFacilitiesPage() {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
-    const res = await fetch(`http://localhost:5000/api/facility/${selectedFacility._id}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/facility/${selectedFacility._id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      credentials: "include", 
+      credentials: "include",
       body: JSON.stringify({
         ...formData,
         price_per_hour: parseFloat(formData.price_per_hour),
@@ -58,7 +58,18 @@ export default function ManageFacilitiesPage() {
     const data = await res.json();
     if (res.ok && data.success) {
       toast.success("Updated successfully!");
-      setFacilities(facilities.map((f) => (f._id === selectedFacility._id ? { ...f, ...formData, price_per_hour: parseFloat(formData.price_per_hour), capacity: parseInt(formData.capacity) } : f)));
+      setFacilities(
+        facilities.map((f) =>
+          f._id === selectedFacility._id
+            ? {
+                ...f,
+                ...formData,
+                price_per_hour: parseFloat(formData.price_per_hour),
+                capacity: parseInt(formData.capacity),
+              }
+            : f,
+        ),
+      );
       setSelectedFacility(null);
     } else {
       toast.error(data.message || "Update failed!");
@@ -66,13 +77,14 @@ export default function ManageFacilitiesPage() {
   };
 
   if (isPending) return <div className="min-h-screen bg-[#060814] pt-28 text-white text-center">Loading...</div>;
-  if (!session?.user) return <div className="min-h-screen bg-[#060814] pt-28 text-white text-center">Please login first</div>;
+  if (!session?.user)
+    return <div className="min-h-screen bg-[#060814] pt-28 text-white text-center">Please login first</div>;
 
   return (
     <div className="min-h-screen bg-[#060814] text-white p-6 pt-24">
       <div className="max-w-6xl mx-auto">
         <h2 className="text-3xl font-black uppercase mb-8">Manage Facilities</h2>
-        
+
         {loading ? (
           <p className="text-white">Loading...</p>
         ) : facilities.length === 0 ? (
@@ -118,7 +130,7 @@ export default function ManageFacilitiesPage() {
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
           <form onSubmit={handleUpdate} className="bg-zinc-900 p-8 rounded-3xl w-full max-w-lg border border-zinc-700">
             <h2 className="text-xl font-bold mb-4">Update Facility</h2>
-            
+
             <input
               type="text"
               value={formData.name || ""}
