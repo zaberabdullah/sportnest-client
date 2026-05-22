@@ -1,4 +1,4 @@
-"use client"; //
+"use client"; 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner"; 
@@ -9,7 +9,7 @@ export default function AddFacilityPage() {
   const router = useRouter();
 
   async function handleFormSubmit(e) {
-    e.preventDefault(); // 
+    e.preventDefault(); 
     setLoading(true);
 
     const formData = new FormData(e.target);
@@ -26,7 +26,7 @@ export default function AddFacilityPage() {
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/facility`, {
         method: "POST",
-        credentials: "include", // 
+        credentials: "include", 
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });

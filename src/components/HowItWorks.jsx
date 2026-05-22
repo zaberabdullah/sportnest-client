@@ -1,6 +1,6 @@
-"use client"; // ✅ এটা লাগবেই
+"use client"; 
 
-import { motion } from "framer-motion"; // ✅ এটা লাগবেই
+import { motion } from "framer-motion"; 
 import { Search, MousePointerClick, Gamepad2 } from "lucide-react";
 
 const howItWorks = [
