@@ -1,8 +1,9 @@
 "use client";
+export const dynamic = 'force-dynamic';
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { toast } from "sonner"; // ✅ sonner ইউজ করো
+import { toast } from "sonner"; 
 import { FcGoogle } from "react-icons/fc";
 import { signIn } from "@/lib/auth-client";
 

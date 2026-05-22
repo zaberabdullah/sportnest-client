@@ -1,8 +1,8 @@
 import ClientFacilitiesAll from "@/components/ClientFacilitiesAll";
-
+export const dynamic = 'force-dynamic' 
 async function getAllFacilities() {
   try {
-    const res = await fetch("http://localhost:5000/api/facility", {
+    const res = await fetch (`${process.env.NEXT_PUBLIC_API_URL}/api/facility`, {
       cache: "no-store", 
     });
     if (!res.ok) return [];
