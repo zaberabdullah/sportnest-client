@@ -19,9 +19,9 @@ export default function FacilityDetails({ params }) {
 
   useEffect(() => {
     if (!id) return;
-    fetch(`http://localhost:5000/api/facility/${id}`)
-     .then((res) => res.json())
-     .then((data) => setFacility(data.facility || data));
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/facility/${id}`)
+      .then((res) => res.json())
+      .then((data) => setFacility(data.facility || data));
   }, [id]);
 
   const handleProceedToBooking = () => {
@@ -40,17 +40,17 @@ export default function FacilityDetails({ params }) {
 
   return (
     <div className="w-full bg-[#121212] min-h-screen text-white antialiased flex flex-col">
-       <div className="relative w-full h-[30vh] sm:h-[40vh] md:h-[45vh] bg-zinc-900 overflow-hidden">
-      {facility?.image && (
-        <Image
-          src={facility.image}
-          alt={facility.name}
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover opacity-60"
-        />
-      )}
+      <div className="relative w-full h-[30vh] sm:h-[40vh] md:h-[45vh] bg-zinc-900 overflow-hidden">
+        {facility?.image && (
+          <Image
+            src={facility.image}
+            alt={facility.name}
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover opacity-60"
+          />
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-[#121212] via-[#121212]/40 to-transparent"></div>
       </div>
 
@@ -87,9 +87,7 @@ export default function FacilityDetails({ params }) {
                   👥
                 </div>
                 <div>
-                  <span className="text- text-zinc-500 font-bold uppercase tracking-wider block">
-                    Max Capacity
-                  </span>
+                  <span className="text- text-zinc-500 font-bold uppercase tracking-wider block">Max Capacity</span>
                   <span className="text-xs sm:text-sm font-black text-white">{facility.capacity || "N/A"} Players</span>
                 </div>
               </div>
@@ -98,9 +96,7 @@ export default function FacilityDetails({ params }) {
                   🕒
                 </div>
                 <div>
-                  <span className="text- text-zinc-500 font-bold uppercase tracking-wider block">
-                    Session Limit
-                  </span>
+                  <span className="text- text-zinc-500 font-bold uppercase tracking-wider block">Session Limit</span>
                   <span className="text-xs sm:text-sm font-black text-white">60 Min / Slot</span>
                 </div>
               </div>
@@ -109,9 +105,7 @@ export default function FacilityDetails({ params }) {
 
           <div className="bg-zinc-900 border border-zinc-800 p-6 sm:p-8 rounded-3xl space-y-6 lg:sticky lg:top-6 h-fit shadow-xl">
             <div>
-              <span className="text- text-zinc-500 font-bold uppercase block tracking-wider mb-1">
-                Pricing / Hour
-              </span>
+              <span className="text- text-zinc-500 font-bold uppercase block tracking-wider mb-1">Pricing / Hour</span>
               <div className="flex items-baseline gap-1.5">
                 <span className="text-3xl font-black text-[#10b981]">৳{facility.price_per_hour}</span>
                 <span className="text- text-zinc-500 font-bold uppercase tracking-wider">Per Hour</span>
@@ -123,7 +117,7 @@ export default function FacilityDetails({ params }) {
               disabled={isPending}
               className="w-full h-12 bg-[#10b981] hover:bg-[#0d9488] disabled:opacity-50 text-white text-xs font-black uppercase rounded-xl transition-all"
             >
-              {isPending? "Loading..." : "Proceed To Booking ⚡"}
+              {isPending ? "Loading..." : "Proceed To Booking ⚡"}
             </button>
 
             {isModalOpen && (
