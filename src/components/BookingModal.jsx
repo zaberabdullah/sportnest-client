@@ -15,7 +15,7 @@ export default function BookingModal({ facilityId, price, onClose }) {
 
     const form = e.target;
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/booking"`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/booking`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
