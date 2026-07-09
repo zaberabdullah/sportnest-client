@@ -4,7 +4,7 @@
 
 ### 🌐 Live Project
 
-[[আপনার Vercel লাইভ লিংক এখানে দিন]](https://sportnest-client-sigma.vercel.app/)
+[[Click to see]](https://sportnest-client-sigma.vercel.app/)
 
 ---
 
@@ -88,5 +88,5 @@ npm run dev
 
 ## 🔗 Repository Links
 
-* **Client-side:** [আপনার গিটহাব ক্লায়েন্ট লিংক]](https://github.com/zaberabdullah/sportnest-client)
-* **Server-side:** [আপনার গিটহাব সার্ভার লিংক]](https://github.com/zaberabdullah/sportnest-server)
+* **Client-side:** [[client]](https://github.com/zaberabdullah/sportnest-client)
+* **Server-side:** [[server]](https://github.com/zaberabdullah/sportnest-server)
